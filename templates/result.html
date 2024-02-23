@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{url_for('static', filename='layui/css/layui.css')}}" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Result</h1>
+
+    <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
+    <script>
+        var $ = layui.$;
+        layui.use(function () {
+            $('#resultLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>无创脑机接口中的异构迁移学习系统</title>
+    <link href="{{url_for('static', filename='layui/css/layui.css')}}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo layui-bg-black" style="width: 230pt;">无创脑机接口中的异构迁移学习系统</div>
+            <!-- 头部区域（可配合layui已有的水平导航） -->
+            <ul class="layui-nav layui-layout-left">
+                <!-- 移动端显示 -->
+                <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+                    <i class="layui-icon layui-icon-spread-left"></i>
+                </li>
+            </ul>
+            {% if username %}
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
+                    <a>
+                        <img src="{{url_for('static', filename='head.jpg')}}" class="layui-nav-img">
+                        {{ username }}
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
+                    <a href="javascript: logout();">登出</a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="layui-side layui-bg-black" style="width: 230pt;">
+            <div class="layui-side-scroll" style="width: 100%;">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test" style="width: 100%;">
+                    <li class="layui-nav-item" id="panelLi"><a href="javascript:;">控制面板</a></li>
+                    <li class="layui-nav-item" id="resultLi"><a href="javascript:;">结果展示</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="layui-body" style="left: 230pt;">
+            {% if username %}
+            <iframe id="body" width="100%" height="100%" src="{{url_for('panel')}}"></iframe>
+            {% else %}
+            <iframe id="body" width="100%" height="100%" src="{{url_for('login')}}"></iframe>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            location.href = '/logout';
+        }
+    </script>
+</body>
+
+</html>
