@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>登录输入框</title>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='layui/css/layui.css')}}">
+<style type="text/css">
+body {
+	background:#e7e7e7 ;
+ 	background: #e7e7e7 url(' img/logo.png');
+}
+
+.container {
+	width: 400px;
+	height: 280px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -200px;
+	margin-top: -140px;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 3px 18px rgba(100, 0, 0, .5);
+}
+</style>
+<script src="{{url_for('static', filename='layui/layui.js')}}"></script>
+<script>
+
+	//Demo
+	layui.use('form', function() {
+		var form = layui.form;
+
+		//监听提交
+		form.on('submit(formDemo)', function(data) {
+			
+			 if (data.field.username=="1" && data.field.password=="1234"){
+				layer.msg("登录成功！");
+				location.href="/WebUI/model/train.html"
+			}else{
+				layer.msg("登录失败！");
+			} 
+			return false;
+		});
+	});
+	</script>
+
+</head>
+<body>
+	<form class="layui-form" aciton="">
+		<div class="container">
+			<header
+				style="margin-top: 10px; margin-bottom: 20px; text-align: center">
+				<h1>用户登录</h1>
+			</header>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline ">
+					<i class="layui-icon layui-icon-username"
+						style="font-size: 20px; position: absolute; margin-top: 5px"></i>
+						
+					<input type="text" name="username" lay-verify="required" 
+						autocomplete="off" placeholder="请输入用户名" class="layui-input"
+						style="padding-left: 25px">
+						
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">密 &nbsp;&nbsp;码</label>
+				<div class="layui-input-inline">
+					<i class="layui-icon layui-icon-password"
+						style="font-size: 20px; position: absolute; margin-top: 5px"></i>
+						
+					<input type="password" name="password" required
+						lay-verify="required" placeholder="请输入密码" autocomplete="off"
+						class="layui-input" style="padding-left: 25px">
+						
+				</div>
+			</div>
+			<br/>
+			<div class="layui-form-item" style="text-align: center">
+				<button type="submit" class="layui-btn layui-btn-radius"  lay-submit lay-filter="formDemo">登&nbsp;&nbsp;录</button>
+				<button type="reset" class="layui-btn layui-btn-radius">重&nbsp;&nbsp;置</button>
+			</div>
+
+		</div>
+	</form>
+</body>
+</html>
