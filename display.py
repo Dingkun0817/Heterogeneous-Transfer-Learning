@@ -43,9 +43,14 @@ def result():
     print(type(session['compose']))
     sss = ext(session['compose'])
     print(sss)
-    return sss
-    # return render_template('result.html')
+    # return sss
+    return render_template('result.html')
 
+@app.route('/getTable', methods=['GET', 'POST'])
+def table():
+    return {'code':0, 'msg':'', 'count':0, 'data': 
+            [{'head':'accuracy', 's0':65.667, 's1':55.853}, 
+             {'head':'precision', 's0':70.113}]}
 
 def ext (my_dict):
      # 解析

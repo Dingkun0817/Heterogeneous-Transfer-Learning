@@ -8,7 +8,11 @@
 </head>
 
 <body>
-    <h1>Result</h1>
+    <div style="text-align: center;">
+        <div class="layui-inline">
+            <table id="result_table" lay-filter="result_table"></table>
+        </div>
+    </div>
 
     <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script>
@@ -16,6 +20,36 @@
         layui.use(function () {
             $('#resultLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
         })
+
+        layui.use('table', function () {
+            var table = layui.table;
+            //第一个实例
+            table.render({
+                elem: '#result_table'
+                , url: '/getTable' //数据接口
+                , page: false //开启分页
+                , cols: [[ //表头
+                    {
+                        field: 'head', title: '', width: 100, templet: function (data) {
+                            console.log(data);
+                            return "<span style='font-weight: 600;'>" + data.head + "</span>"
+                        }
+                    },
+                    { field: 's0', title: 's0', width: 80 },
+                    { field: 's1', title: 's1', width: 80 },
+                    { field: 's2', title: 's2', width: 80 },
+                    { field: 's3', title: 's3', width: 80 },
+                    { field: 's4', title: 's4', width: 80 },
+                    { field: 's5', title: 's5', width: 80 },
+                    { field: 's6', title: 's6', width: 80 },
+                    { field: 's7', title: 's7', width: 80 },
+                    { field: 's8', title: 's8', width: 80 },
+                    { field: 'average', title: 'average', width: 100 },
+                    { field: 'deviation', title: 'standard deviation', width: 175 },
+                ]]
+                , width: 1105
+            });
+        });
     </script>
 </body>
 
