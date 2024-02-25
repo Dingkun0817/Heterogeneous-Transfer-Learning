@@ -33,10 +33,10 @@ def run():
     print(request.form)
     dataset = ('BNCI2014001.zip', 'BNCI2014002.zip', 'BNCI2014005.zip')
     if( (request.form['source'] not in dataset) or (request.form['target'] not in dataset)):
-        return ''
+        return ''  # 返回为空串, 假
     else:
         session['compose'] = request.form
-        return ' '
+        return 'true'  # 返回有效
 
 @app.route('/result', methods=['GET'])
 def result():
@@ -48,7 +48,7 @@ def result():
 
 @app.route('/getTable', methods=['GET', 'POST'])
 def table():
-    return {'code':0, 'msg':'', 'count':0, 'data': 
+    return {'code':0, 'msg':'', 'count':0, 'data':
             [{'head':'accuracy', 's0':65.667, 's1':55.853}, 
              {'head':'precision', 's0':70.113}]}
 

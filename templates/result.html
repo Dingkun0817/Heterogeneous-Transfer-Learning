@@ -8,11 +8,18 @@
 </head>
 
 <body>
+    <!--    两层div居中  -->
     <div style="text-align: center;">
         <div class="layui-inline">
             <table id="result_table" lay-filter="result_table"></table>
         </div>
     </div>
+
+    <!--    展示exp结果图  -->
+    <div style="text-align: center;">
+            <img src="{{url_for('static', filename='down.jpeg')}}">
+    </div>
+
 
     <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script>
