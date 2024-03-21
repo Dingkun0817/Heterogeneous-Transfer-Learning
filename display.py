@@ -31,7 +31,7 @@ def check():
 @app.route('/run', methods=['POST'])
 def run():
     print(request.form)
-    dataset = ('BNCI2014001.zip', 'BNCI2014002.zip', 'BNCI2014005.zip')
+    dataset = ('BNCI2014001.zip', 'BNCI2014004.zip')
     if( (request.form['source'] not in dataset) or (request.form['target'] not in dataset)):
         return ''  # 返回为空串, 假
     else:
