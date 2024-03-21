@@ -15,8 +15,9 @@ def login():
 
 @app.route('/logout', methods=['GET'])
 def logout():
-    if (session.get('username')):
-        session.pop('username')
+    session.pop('username')
+    if session.get('compose'):
+        session.pop('compose')
     return render_template('main.html')
 
 @app.route('/login/check', methods=['POST'])
@@ -48,6 +49,8 @@ def framework():
 
 @app.route('/result', methods=['GET'])
 def result():
+    if not session.get('compose'):
+        return panel()
     print(type(session['compose']))
     sss = ext(session['compose'])
     print(sss)

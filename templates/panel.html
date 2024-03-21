@@ -51,9 +51,9 @@
             </fieldset>
         </div>
         <div class="layui-form" style="text-align: center;">
-            <input type="radio" name="task" value="脑电帽迁移" title="脑电帽迁移" checked>
-            <input type="radio" name="task" value="模态迁移" title="模态迁移">
-            <input type="radio" name="task" value="范式迁移" title="范式迁移">
+            <input type="radio" name="task" value="naodianmao" title="脑电帽迁移" checked>
+            <input type="radio" name="task" value="moshi" title="模态迁移">
+            <input type="radio" name="task" value="fanshi" title="范式迁移">
         </div>
 
         <div class="site-border-green">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="layui-form">
-            <div style="margin-left: 17%;">
+            <div style="margin-left: 15%;">
                 <div class="layui-row">
                     <div class="layui-col-md2">
                         <div class="grid-demo label-div"> 传统机器学习算法 </div>
@@ -102,6 +102,11 @@
                     </div>
                     <div class="layui-col-md2">
                         <input class="grid-demo" type="radio" name="model" value="CDAN" title="CDAN">
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-md2">
+                        <div class="grid-demo label-div" style="opacity:0;"> 现有迁移学习算法 </div>
                     </div>
                     <div class="layui-col-md2">
                         <input class="grid-demo" type="radio" name="model" value="MDD" title="MDD">
@@ -213,7 +218,6 @@
 <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
 <script>
     layui.use(function () {
-
         var $ = layui.$;
         var upload = layui.upload;
         var layer = layui.layer;
@@ -222,10 +226,26 @@
 
         $('#panelLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
 
-        var EAid = 0;
+        var EAid = 0; var data = JSON.parse(sessionStorage.getItem('data'));
+        console.log(data);
+        if (data) {
+            $("input:radio[name='task'][value='" + data.task + "']").prop("checked", true);
+            $("input:radio[name='model'][value='" + data.model + "']").prop("checked", true);
+            $("[id='epoch']").val(data.epoch);
+            $("[id='batchsize']").val(data.batchsize);
+            $("[id='optimizer']").val(data.optimizer);
+            $("input[name='EASwitch']").val(data.ea);
+            // upload.render({
+            //     before: function () {
+            //         $('#uploadSource').removeClass('layui-hide').attr('src', data.source);
+            //     }
+            // })
+            form.render();
+        }
 
         upload.render({
             elem: '#uploadSource',
+            auto: false,
             // url: '',
             done: function (res) {
                 // layer.msg('上传成功');
@@ -236,6 +256,7 @@
 
         upload.render({
             elem: '#uploadTarget',
+            auto: false,
             done: function (res) {
                 $('#uploadTarget').removeClass('layui-hide').find('zip').attr('src', res.files.file);
             }
@@ -262,28 +283,36 @@
             }
         });
 
+        function getData() {
+            files = $('.layui-inline.layui-upload-choose');
+            return {
+                task: $("input[name='task']:checked").val(),
+                model: $("input[name='model']:checked").val(),
+                epoch: $('#epoch').val(),
+                source: files.eq(0).text(),
+                target: files.eq(1).text(),
+                batchsize: $('#batchsize').val(),
+                optimizer: $('#optimizer').val(),
+                ea: $("input[name='EASwitch']").val()
+            }
+        }
+
         util.event('lay-active', {
             run: function () {
-                files = $('.layui-inline.layui-upload-choose');
-                if (files.length < 2) {
-                    layer.open ({
+                data = getData();
+                sessionStorage.setItem('data', JSON.stringify(data));
+
+                if (data.source == '' || data.target == '') {
+                    layer.open({
                         title: '提示',
                         content: '请选择数据集'
                     });
                     return;
                 }
+
                 $.ajax({
                     url: '/run',
-                    data: {
-                        task: $("input[name='task']:checked").val(),
-                        model: $("input[name='model']:checked").val(),
-                        epoch: $('#epoch').val(),
-                        source: files.eq(0).text(),
-                        target: files.eq(1).text(),
-                        batchsize: $('#batchsize').val(),
-                        optimizer: $('#optimizer').val(),
-                        ea: $("input[name='EASwitch']").val()
-                    },
+                    data: data,
                     dataType: 'text',
                     type: 'post',
                     success: function (data) {
@@ -292,7 +321,7 @@
                             // $("div[class='layui-body']").innerHTML = "<iframe id='body' width='100%' height='100%' src=''></iframe>";
                             console.log('data');
                         } else {
-                            layer.open ({
+                            layer.open({
                                 title: '提示',
                                 content: '未识别的数据集，请确认'
                             });
