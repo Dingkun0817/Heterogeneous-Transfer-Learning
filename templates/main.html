@@ -34,27 +34,36 @@
             {% endif %}
         </div>
 
-        <div class="layui-side layui-bg-black" style="width: 230pt;">
-            <div class="layui-side-scroll" style="width: 100%;">
+        <div class="layui-side layui-bg-black" style="width:230pt;">
+            <div class="layui-side-scroll" style="width:100%;">
                 <ul class="layui-nav layui-nav-tree" lay-filter="test" style="width: 100%;">
                     <li class="layui-nav-item" id="panelLi"><a href="javascript:;">控制面板</a></li>
                     <li class="layui-nav-item" id="resultLi"><a href="javascript:;">结果展示</a></li>
+                    <li class="layui-nav-item" id="comparisionLi"><a href="javascript:subpage('comparision');">各迁移算法结果对比展示</a></li>
+                    <li class="layui-nav-item" id="frameworkLi"><a href="javascript:subpage('framework');">迁移学习算法架构总览</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="layui-body" style="left: 230pt;">
+        <div class="layui-body" style="left:230pt;">
             {% if username %}
-            <iframe id="body" width="100%" height="100%" src="{{url_for('panel')}}"></iframe>
+            <iframe id="body" style="width:100%; height:120%;" src="{{url_for('panel')}}"></iframe>
             {% else %}
-            <iframe id="body" width="100%" height="100%" src="{{url_for('login')}}"></iframe>
+            <iframe id="body" style="width:100%; height:100%;" src="{{url_for('login')}}"></iframe>
             {% endif %}
         </div>
     </div>
 
+    <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script>
+        var $ = layui.$;
+
         function logout() {
             location.href = '/logout';
+        }
+
+        function subpage(name) {
+            $('#body').attr("src", name);
         }
     </script>
 </body>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{url_for('static', filename='layui/css/layui.css')}}" rel="stylesheet">
+</head>
+
+<body>
+    <table style="width:85%; margin:0 auto;">
+        <tr style="height:30px;"></tr>
+        <tr>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图0 EEGNet模型架构图.png')}}" style="width:100%;">
+            </td>
+            <td style="width:5%;"></td>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图1 DAN算法架构图.png')}}" style="width:100%;">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">EEGNet模型架构图</td>
+            <td></td>
+            <td style="text-align:center;">DAN算法架构图</td>
+        </tr>
+        <tr style="height:45px;"></tr>
+
+        <tr>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图2 DANN算法架构图.png')}}" style="width:100%;">
+            </td>
+            <td style="width:5%;"></td>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图3 JAN算法的基础模型和对抗版本的模型（JAN-A）.png')}}" style="width:100%;">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">DANN算法架构图</td>
+            <td></td>
+            <td style="text-align:center;">JAN算法的基础模型和对抗版本的模型（JAN-A）</td>
+        </tr>
+        <tr style="height:45px;"></tr>
+
+        <tr>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图4 CDAN算法的基础版本（a）和随机多层线性映射的版本（b）.png')}}" style="width:100%;">
+            </td>
+            <td style="width:5%;"></td>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图5 MDD算法架构图.png')}}" style="width:100%;">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">CDAN算法的基础版本（a）和随机多层线性映射的版本（b）</td>
+            <td></td>
+            <td style="text-align:center;">MDD算法架构图</td>
+        </tr>
+        <tr style="height:45px;"></tr>
+
+        <tr>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图6 MCC算法架构图和MCC损失的流程图.png')}}" style="width:100%;">
+            </td>
+            <td style="width:5%;"></td>
+            <td style="width:40%;">
+                <img src="{{url_for('static', filename='framework/图7 SHOT&ISFDA算法架构示意图.png')}}" style="width:100%;">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center;">MCC算法架构图和MCC损失的流程图</td>
+            <td></td>
+            <td style="text-align:center;">SHOT&ISFDA算法架构示意图</td>
+        </tr>
+        <tr style="height:45px;"></tr>
+    </table>
+
+    <div style="text-align:center; margin-bottom:45px;">
+        <img src="{{url_for('static', filename='framework/图8 我们提出的SOTA方法.png')}}" style="width:40%;">
+        <br>
+        <td style="text-align:center;">我们提出的SOTA方法</td>
+    </div>
+
+    <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
+    <script>
+        var $ = layui.$;
+        layui.use(function () {
+            $('#frameworkLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
+        })
+    </script>
+</body>
+
+</html>

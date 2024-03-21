@@ -37,6 +37,14 @@ def run():
     else:
         session['compose'] = request.form
         return 'true'  # 返回有效
+    
+
+@app.route('/comparision', methods=['GET'])
+def comparision():
+    return render_template('comparision.html')
+@app.route('/framework', methods=['GET'])
+def framework():
+    return render_template('framework.html')
 
 @app.route('/result', methods=['GET'])
 def result():
@@ -94,8 +102,6 @@ def ext (my_dict):
             else:
                 res += 'woEA'
     return res
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080, threaded=True)  # host='0.0.0.0'
