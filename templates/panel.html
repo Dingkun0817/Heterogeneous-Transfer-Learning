@@ -202,8 +202,8 @@
 
         <div class="layui-form" style="text-align: center; margin-top: 1%;">
             <input type="checkbox" name="EASwitch" title="启用EA|关闭EA" lay-skin="switch" lay-filter="EAswitch-filter">
-            <button type="button" id="EADisplayButton" class="layui-btn layui-btn-primary layui-btn-disabled"
-                lay-on="test-tips-right" style="margin-left: 15%;" disabled>
+            <button type="button" id="EADisplayButton" class="layui-btn layui-btn-primary"
+                lay-on="ea-layer" style="margin-left: 15%;">
                 查看对齐效果
             </button>
         </div>
@@ -226,7 +226,7 @@
 
         $('#panelLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
 
-        var EAid = 0; var data = JSON.parse(sessionStorage.getItem('data'));
+        var data = JSON.parse(sessionStorage.getItem('data'));
         console.log(data);
         if (data) {
             $("input:radio[name='task'][value='" + data.task + "']").prop("checked", true);
@@ -262,25 +262,32 @@
             }
         });
 
-        util.on('lay-on', {
-            'test-tips-right': function () {
-                if (EAid) {
-                    layer.close(EAid);
-                    EAid = 0;
-                } else {
-                    EAid = layer.tips('假装这是对齐结果', this);
-                }
-            }
-        });
+        // s = "<h2 style='margin-top:15px; margin-left:15px'>源域数据集</h2>" 
+        // + (source ? "<div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + source + "_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + source +"_EA_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>"
+        //     : "<div style='text-align:center; color:red;'>请选择源域数据集</div>")
+        // + "<h2 style='margin-top:15px; margin-left:15px'>目标域数据集</h2>" 
+        // + (target ? "<div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + target + "_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + target + "_EA_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>" 
+        //     : "<div style='text-align:center; color:red;'>请选择目标域数据集</div>");
+        // console.log(s);
 
-        form.on('switch(EAswitch-filter)', function (data) {
-            if (data.elem.checked) {
-                $('#EADisplayButton').removeClass('layui-btn-disabled').attr("disabled", false);
-            } else {
-                $('#EADisplayButton').addClass('layui-btn-disabled').attr("disabled", true);
-                layer.close(EAid);
-                EAid = 0;
-            }
+        util.on('lay-on', {
+            'ea-layer': function(){
+                files = $('.layui-inline.layui-upload-choose');
+                source = files.eq(0).text().slice(0,-4);
+                target = files.eq(1).text().slice(0,-4);
+                
+                layer.open({
+                    type: 1,
+                    offset: 'r',
+                    anim: 'slideLeft', // 从右往左
+                    area: ['40%', '100%'],
+                    shade: 0.1,
+                    shadeClose: true,
+                    title: "对齐结果演示",
+                    // id: 'ID-demo-layer-direction-r',
+                    content: "<h2 style='margin-top:15px; margin-left:15px'>源域数据集</h2>" + (source ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + source + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + source + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>" : "<div style='text-align:center; color:red;'>请选择源域数据集</div>") + "<h2 style='margin-top:15px; margin-left:15px'>目标域数据集</h2>" + (target ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + target + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + target + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>" : "<div style='text-align:center; color:red;'>请选择目标域数据集</div>"),
+                });
+            },
         });
 
         function getData() {
