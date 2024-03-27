@@ -60,8 +60,10 @@ def result():
 @app.route('/getTable', methods=['GET', 'POST'])
 def table():
     return {'code':0, 'msg':'', 'count':0, 'data':
-            [{'head':'accuracy', 's0':65.667, 's1':55.853}, 
-             {'head':'precision', 's0':70.113}]}
+            [{'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
+             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
+             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
+             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224}]}
 
 def ext (my_dict):
      # 解析
