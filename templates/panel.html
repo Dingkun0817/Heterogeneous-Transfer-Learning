@@ -262,14 +262,6 @@
             }
         });
 
-        // s = "<h2 style='margin-top:15px; margin-left:15px'>源域数据集</h2>" 
-        // + (source ? "<div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + source + "_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + source +"_EA_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>"
-        //     : "<div style='text-align:center; color:red;'>请选择源域数据集</div>")
-        // + "<h2 style='margin-top:15px; margin-left:15px'>目标域数据集</h2>" 
-        // + (target ? "<div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + target + "_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐前</span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='{" + "{url_for('static', filename='panel/" + target + "_EA_subjects.png')}}' style='width:80%;'> <br> <span style='text-align:center;'>EA操作对齐后</span> </div>" 
-        //     : "<div style='text-align:center; color:red;'>请选择目标域数据集</div>");
-        // console.log(s);
-
         util.on('lay-on', {
             'ea-layer': function(){
                 files = $('.layui-inline.layui-upload-choose');
