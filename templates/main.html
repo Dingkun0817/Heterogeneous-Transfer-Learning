@@ -37,19 +37,19 @@
         <div class="layui-side layui-bg-black" style="width:230pt;">
             <div class="layui-side-scroll" style="width:100%;">
                 <ul class="layui-nav layui-nav-tree" lay-filter="test" style="width: 100%;">
-                    <li class="layui-nav-item" id="panelLi"><a href="javascript:javascript:subpage('panel');">控制面板</a></li>
-                    <li class="layui-nav-item" id="resultLi"><a href="javascript:subpage('result');">结果展示</a></li>
-                    <li class="layui-nav-item" id="frameworkLi"><a href="javascript:subpage('framework');">迁移学习算法架构总览</a></li>
-                    <li class="layui-nav-item" id="comparisionLi"><a href="javascript:subpage('comparision');">各迁移算法结果对比展示</a></li>
+                    <li class="layui-nav-item" id="panelLi"><a onclick="subpage('/panel');">控制面板</a></li>
+                    <li class="layui-nav-item" id="resultLi"><a onclick="subpage('/result');">结果展示</a></li>
+                    <li class="layui-nav-item" id="frameworkLi"><a onclick="subpage('/framework');">迁移学习算法架构总览</a></li>
+                    <li class="layui-nav-item" id="comparisionLi"><a onclick="subpage('/comparision');">各迁移算法结果对比展示</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="layui-body" style="left:230pt;">
             {% if username %}
-            <iframe id="body" style="width:100%; height:120%;" src="{{url_for('panel')}}"></iframe>
+            <iframe id="body" style="width:100%; height:120%;" src='/panel'></iframe>
             {% else %}
-            <iframe id="body" style="width:100%; height:100%;" src="{{url_for('login')}}"></iframe>
+            <iframe id="body" style="width:100%; height:100%;" src='/login'></iframe>
             {% endif %}
         </div>
     </div>
@@ -64,9 +64,13 @@
         }
 
         function subpage(name) {
-            $('#body').attr("src", name);
+            if ($("[id='body']").attr("src") == '/panel') {
+                let panel = $("[id='body']")[0].contentWindow;
+                panel.data = panel.getData();
+                sessionStorage.setItem('data', JSON.stringify(panel.data));
+            }
+            $("[id='body']").attr("src", name);
         }
     </script>
 </body>
-
 </html>

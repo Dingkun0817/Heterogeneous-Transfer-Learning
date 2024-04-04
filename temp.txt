@@ -129,3 +129,14 @@
             </div>
             <div class="layui-col-sm2">&nbsp;</div>
         </div> -->
+
+            // url: '',
+            // choose: function (res) {
+            //     console.log(res);
+            //     console.log(upload.files);
+            //     console.log(res.pushFile());
+            //     $("[id='source-filename']").text('xxx');
+            // }, done: function (res) {
+            //     // layer.msg('上传成功'); console.log(res);
+            //     $('#uploadSource').removeClass('layui-hide').find('zip').attr('src', res.files.file);
+            // }

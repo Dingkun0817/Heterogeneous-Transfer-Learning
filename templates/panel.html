@@ -51,9 +51,9 @@
             </fieldset>
         </div>
         <div class="layui-form" style="text-align: center;">
-            <input type="radio" name="task" value="naodianmao" title="脑电帽迁移" checked>
-            <input type="radio" name="task" value="moshi" title="模态迁移">
-            <input type="radio" name="task" value="fanshi" title="范式迁移">
+            <input type="radio" name="task" value="脑电帽迁移" title="脑电帽迁移" checked>
+            <input type="radio" name="task" value="模态迁移" title="模态迁移">
+            <input type="radio" name="task" value="范式迁移" title="范式迁移">
         </div>
 
         <div class="site-border-green">
@@ -61,7 +61,6 @@
                 <legend class="layui-font-green">请选择模型</legend>
             </fieldset>
         </div>
-
         <div class="layui-form">
             <div style="margin-left: 15%;">
                 <div class="layui-row">
@@ -137,24 +136,25 @@
                 <legend class="layui-font-green">请上传数据集</legend>
             </fieldset>
         </div>
-
-        <div class="layui-row" style="text-align: center;">
-            <div class="layui-col-sm2">&nbsp;</div>
-            <div class="layui-col-sm3">
-                <button id="uploadSource" class="layui-btn test"
-                    lay-data="{url:'/b/', accept:'file', exts:'zip', auto:false, drag:true, acceptMime:'application/zip'}"
-                    style="margin-right:8%;">
-                    选择源域数据集(.zip)
-                </button>
-            </div>
-            <div class="layui-col-sm2">&nbsp;</div>
-            <div class="layui-col-sm3">
-                <button id="uploadTarget" class="layui-btn test"
-                    lay-data="{url:'/b/', accept:'file', exts:'zip', auto:false, drag:true, acceptMime:'application/zip'}">
-                    选择目标域数据集(.zip)
-                </button>
-            </div>
-            <div class="layui-col-sm2">&nbsp;</div>
+        <div style="text-align:center; width:100%;">
+            <table style="width:60%; margin:0 auto;">
+                <tr>
+                    <td>
+                        <button id="source-upload" type="file" class="layui-btn test" lay-data="{url:'/b/', accept:'file', exts:'zip', auto:false, drag:true, acceptMime:'application/zip'}">
+                            选择源域数据集(.zip)
+                        </button>
+                    </td>
+                    <td>
+                        <button id="target-upload" type="file" class="layui-btn test" lay-data="{url:'/b/', accept:'file', exts:'zip', auto:false, drag:true, acceptMime:'application/zip'}">
+                            选择目标域数据集(.zip)
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="source-filename"></td>
+                    <td id="target-filename"></td>
+                </tr>
+            </table>
         </div>
 
         <div class="site-border-green">
@@ -162,7 +162,6 @@
                 <legend class="layui-font-green">参数调节</legend>
             </fieldset>
         </div>
-
         <div class="layui-form layui-row">
             <div class="grid-demo layui-col-md1" style="margin-left: 6%; padding-right:1%; text-align: right;">
                 <div class="label-div"> epoch </div>
@@ -201,9 +200,8 @@
         </div>
 
         <div class="layui-form" style="text-align: center; margin-top: 1%;">
-            <input type="checkbox" name="EASwitch" title="启用EA|关闭EA" lay-skin="switch" lay-filter="EAswitch-filter">
-            <button type="button" id="EADisplayButton" class="layui-btn layui-btn-primary"
-                lay-on="ea-layer" style="margin-left: 15%;">
+            <input type="checkbox" name="EASwitch" title="启用EA|关闭EA" lay-skin="switch" lay-filter="EASwitch-filter">
+            <button type="button" id="EADisplayButton" class="layui-btn layui-btn-primary" lay-on="ea-layer" style="margin-left: 15%;">
                 查看对齐效果
             </button>
         </div>
@@ -217,48 +215,68 @@
 
 <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
 <script>
+    var $ = layui.$;
+    var data = JSON.parse(sessionStorage.getItem('data'));
+    data = (data ? data : {source:'', target:''});
+    // if (data === null) {
+    //     data = {source:'', target:''};
+    // }
+    function getData() {
+        return {
+            task: $("input[name='task']:checked").val(),
+            model: $("input[name='model']:checked").val(),
+            epoch: $('#epoch').val(),
+            batchsize: $('#batchsize').val(),
+            optimizer: $('#optimizer').val(),
+            ea: $("input[name='EASwitch']").is(":checked"),
+            source: data.source,
+            target: data.target,
+        };
+    }
+    // window.onbeforeunload = function() {	
+    //     sessionStorage.clear();
+    // }
+    
     layui.use(function () {
-        var $ = layui.$;
         var upload = layui.upload;
         var layer = layui.layer;
         var util = layui.util;
         var form = layui.form;
 
         $('#panelLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
-
-        var data = JSON.parse(sessionStorage.getItem('data'));
-        console.log(data);
+        // console.log(data);
         if (data) {
             $("input:radio[name='task'][value='" + data.task + "']").prop("checked", true);
             $("input:radio[name='model'][value='" + data.model + "']").prop("checked", true);
             $("[id='epoch']").val(data.epoch);
             $("[id='batchsize']").val(data.batchsize);
             $("[id='optimizer']").val(data.optimizer);
-            $("input[name='EASwitch']").val(data.ea);
-            // upload.render({
-            //     before: function () {
-            //         $('#uploadSource').removeClass('layui-hide').attr('src', data.source);
-            //     }
-            // })
+            if (data.ea) {
+                $("input[name='EASwitch']").attr("checked", true);
+            } else {
+                $("input[name='EASwitch']").removeAttr("checked");
+            }
+            $("[id='source-filename']").text(data.source);
+            $("[id='target-filename']").text(data.target);
             form.render();
         }
 
         upload.render({
-            elem: '#uploadSource',
+            elem: "[type='file']",
             auto: false,
-            // url: '',
-            done: function (res) {
-                // layer.msg('上传成功');
-                $('#uploadSource').removeClass('layui-hide').find('zip').attr('src', res.files.file);
-                // console.log(res);
-            }
-        });
-
-        upload.render({
-            elem: '#uploadTarget',
-            auto: false,
-            done: function (res) {
-                $('#uploadTarget').removeClass('layui-hide').find('zip').attr('src', res.files.file);
+            choose: function(obj){
+                // var files = obj.pushFile(); // 将每次选择的文件追加到文件队列
+                let id = this.elem.attr("id");
+                // 预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                obj.preview(function(index, file, result){
+                    if (id == 'source-upload') {
+                        $("[id='source-filename']").text(file.name);
+                        data.source = file.name;
+                    } else {
+                        $("[id='target-filename']").text(file.name);
+                        data.target = file.name;
+                    }
+                });
             }
         });
 
@@ -283,20 +301,6 @@
             },
         });
 
-        function getData() {
-            files = $('.layui-inline.layui-upload-choose');
-            return {
-                task: $("input[name='task']:checked").val(),
-                model: $("input[name='model']:checked").val(),
-                epoch: $('#epoch').val(),
-                source: files.eq(0).text(),
-                target: files.eq(1).text(),
-                batchsize: $('#batchsize').val(),
-                optimizer: $('#optimizer').val(),
-                ea: $("input[name='EASwitch']").val()
-            }
-        }
-
         util.event('lay-active', {
             run: function () {
                 data = getData();
@@ -305,7 +309,7 @@
                 if (data.source == '' || data.target == '') {
                     layer.open({
                         title: '提示',
-                        content: '请选择数据集'
+                        content: '请选择数据集',
                     });
                     return;
                 }
@@ -316,14 +320,14 @@
                     dataType: 'text',
                     type: 'post',
                     success: function (data) {
-                        if (data) {
+                        if (data == 'true') {
                             $("#body", window.parent.document).attr("src", "{{url_for('result')}}");
                             // $("div[class='layui-body']").innerHTML = "<iframe id='body' width='100%' height='100%' src=''></iframe>";
-                            console.log('data');
+                            // console.log('data');
                         } else {
                             layer.open({
                                 title: '提示',
-                                content: '未识别的数据集，请确认'
+                                content: data,
                             });
                         }
                     },
@@ -332,7 +336,5 @@
         });
     });
 </script>
-
 </body>
-
 </html>
