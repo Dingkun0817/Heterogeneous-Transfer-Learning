@@ -35,8 +35,8 @@ def check():
 @app.route('/run', methods=['POST'])
 def run():
     print(request.form)
-    dataset = ('BNCI2014001.zip', 'BNCI2014004.zip')
-    if (request.form['source'] not in dataset) or (request.form['target'] not in dataset):
+    datasets = [f'BNCI{code}.zip' for code in ('2014001','2014002','2014004','2015002')]
+    if (request.form['source'] not in datasets) or (request.form['target'] not in datasets):
         return '未识别的数据集，请确认'  # 数据集无效
     elif '' in request.form.values():
         return '存在未选择的参数'
@@ -57,9 +57,9 @@ def result():
         return login()
     if 'compose' not in session:
         return panel()
-    print(type(session['compose']))
-    sss = ext(session['compose'])
-    print('SSS:',sss)
+    # print(type(session['compose']))
+    # sss = ext(session['compose'])
+    # print('SSS:',sss)
     # return sss
     return render_template('result.html')
 
@@ -97,6 +97,7 @@ ext(my_dict)
 '''
 def ext(my_dict):
     print('my_dict: ', my_dict)
+    return my_dict['model']
     # if my_dict['task'] == '脑电帽迁移':
     #     res = '1_'
     # elif my_dict['task'] == '模态迁移':
@@ -115,11 +116,10 @@ def ext(my_dict):
     #     res += 'EA'
     # elif my_dict['ea'] == 'false':
     #     res += 'woEA'
-    res = my_dict['model']
-    print("=====")
-    print(res)
-    
-    return res
+
+    # res = my_dict['model']
+    # print("=====")
+    # print(res)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080, threaded=True)  # host='0.0.0.0'
