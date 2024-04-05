@@ -281,11 +281,7 @@
         });
 
         util.on('lay-on', {
-            'ea-layer': function(){
-                files = $('.layui-inline.layui-upload-choose');
-                source = files.eq(0).text().slice(0,-4);
-                target = files.eq(1).text().slice(0,-4);
-                
+            'ea-layer': function(){                
                 layer.open({
                     type: 1,
                     offset: 'r',
@@ -296,7 +292,7 @@
                     title: "<span style='font-size: 24px; font-weight: bold; color: #333; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: all 0.3s;'>对齐结果演示</span>",
                     // title: "对齐结果演示",
                     // id: 'ID-demo-layer-direction-r',
-                    content: "<h2 style='margin-top:15px; margin-left:15px'>源域数据集</h2>" + (source ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + source + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图1 BNCI2014001数据集EA操作对齐前</strong></span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + source + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图2 BNCI2014001数据集EA操作对齐后</strong></span> </div>" : "<div style='text-align:center; color:red;'>请选择源域数据集</div>") + "<h2 style='margin-top:15px; margin-left:15px'>目标域数据集</h2>" + (target ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + target + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图3 BNCI2014004数据集EA操作对齐前</strong></span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + target + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图4 BNCI2014004数据集EA操作对齐后</strong></span> </div>" : "<div style='text-align:center; color:red;'>请选择目标域数据集</div>"),
+                    content: "<h2 style='margin-top:15px; margin-left:15px'>源域数据集</h2>" + (data.source ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + data.source + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图1 BNCI2014001数据集EA操作对齐前</strong></span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + data.source + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图2 BNCI2014001数据集EA操作对齐后</strong></span> </div>" : "<div style='text-align:center; color:red;'>请选择源域数据集</div>") + "<h2 style='margin-top:15px; margin-left:15px'>目标域数据集</h2>" + (data.target ? "<div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + data.target + "_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图3 BNCI2014004数据集EA操作对齐前</strong></span> </div> <div style='text-align:center; margin-bottom:45px;'> <img src='static/panel/" + data.target + "_EA_subjects.png' style='width:80%;'> <br> <span style='text-align:center; font-size:22px;'><strong>图4 BNCI2014004数据集EA操作对齐后</strong></span> </div>" : "<div style='text-align:center; color:red;'>请选择目标域数据集</div>"),
                 });
             },
         });
