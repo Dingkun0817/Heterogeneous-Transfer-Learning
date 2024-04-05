@@ -1,4 +1,7 @@
 from flask import Flask, render_template, url_for, request, session, redirect
+import pandas as pd
+import os
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'XXXXXXX'
 @app.route('/')
@@ -56,17 +59,30 @@ def result():
         return panel()
     print(type(session['compose']))
     sss = ext(session['compose'])
-    print(sss)
+    print('SSS:',sss)
     # return sss
     return render_template('result.html')
 
 @app.route('/getTable', methods=['GET', 'POST'])
 def table():
-    return {'code':0, 'msg':'', 'count':0, 'data':
-            [{'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
-             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
-             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224},
-             {'head':'accuracy', 's0':65.667, 's1':55.853,'s2':65.667, 's3':55.853,'s4':65.667, 's5':55.853,'s6':65.667, 's7':55.853,'s8':65.667, 'Average':55.853,'Standard deviation':1.224}]}
+    file_name = os.path.join('data', ext(session['compose']) + '.xlsx')
+
+    df = pd.read_excel(file_name)
+    df.set_index(df.columns[0], inplace=True)
+
+    if(ext(session['compose']) == 'LDA' or ext(session['compose']) == 'LR' or ext(session['compose']) == 'AdaBoost' or ext(session['compose']) == 'GDBT' or ext(session['compose']) == 'XGB'):
+        return {'code':0, 'msg':'', 'count':0, 'data':
+            [{'head':'accuracy', 's0':df.loc['accuracy', 's0'], 's1':df.loc['accuracy', 's1'], 's2':df.loc['accuracy', 's2'], 's3':df.loc['accuracy', 's3'], 's4':df.loc['accuracy', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['accuracy', 's6'], 's7':df.loc['accuracy', 's7'], 's8':df.loc['accuracy', 's8'], 'Average':df.loc['accuracy', 'Average']},
+             {'head':'precision', 's0':df.loc['precision', 's0'], 's1':df.loc['precision', 's1'], 's2':df.loc['precision', 's2'], 's3':df.loc['precision', 's3'], 's4':df.loc['precision', 's4'], 's5':df.loc['precision', 's5'], 's6':df.loc['precision', 's6'], 's7':df.loc['precision', 's7'], 's8':df.loc['precision', 's8'], 'Average':df.loc['precision', 'Average']},
+             {'head':'recall', 's0':df.loc['recall', 's0'], 's1':df.loc['recall', 's1'], 's2':df.loc['recall', 's2'], 's3':df.loc['recall', 's3'], 's4':df.loc['recall', 's4'], 's5':df.loc['recall', 's5'], 's6':df.loc['recall', 's6'], 's7':df.loc['recall', 's7'], 's8':df.loc['recall', 's8'], 'Average':df.loc['recall', 'Average']},
+             {'head':'f1', 's0':df.loc['f1', 's0'], 's1':df.loc['f1', 's1'], 's2':df.loc['f1', 's2'], 's3':df.loc['f1', 's3'], 's4':df.loc['f1', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['f1', 's6'], 's7':df.loc['f1', 's7'], 's8':df.loc['f1', 's8'], 'Average':df.loc['f1', 'Average']}]}
+    else:
+        return {'code':0, 'msg':'', 'count':0, 'data':
+            [{'head':'accuracy', 's0':df.loc['accuracy', 's0'], 's1':df.loc['accuracy', 's1'], 's2':df.loc['accuracy', 's2'], 's3':df.loc['accuracy', 's3'], 's4':df.loc['accuracy', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['accuracy', 's6'], 's7':df.loc['accuracy', 's7'], 's8':df.loc['accuracy', 's8'], 'Average':df.loc['accuracy', 'Average'], 'Standard deviation':df.loc['accuracy', 'Standard deviation']},
+             {'head':'precision', 's0':df.loc['precision', 's0'], 's1':df.loc['precision', 's1'], 's2':df.loc['precision', 's2'], 's3':df.loc['precision', 's3'], 's4':df.loc['precision', 's4'], 's5':df.loc['precision', 's5'], 's6':df.loc['precision', 's6'], 's7':df.loc['precision', 's7'], 's8':df.loc['precision', 's8'], 'Average':df.loc['precision', 'Average'], 'Standard deviation':df.loc['precision', 'Standard deviation']},
+             {'head':'recall', 's0':df.loc['recall', 's0'], 's1':df.loc['recall', 's1'], 's2':df.loc['recall', 's2'], 's3':df.loc['recall', 's3'], 's4':df.loc['recall', 's4'], 's5':df.loc['recall', 's5'], 's6':df.loc['recall', 's6'], 's7':df.loc['recall', 's7'], 's8':df.loc['recall', 's8'], 'Average':df.loc['recall', 'Average'], 'Standard deviation':df.loc['recall', 'Standard deviation']},
+             {'head':'f1', 's0':df.loc['f1', 's0'], 's1':df.loc['f1', 's1'], 's2':df.loc['f1', 's2'], 's3':df.loc['f1', 's3'], 's4':df.loc['f1', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['f1', 's6'], 's7':df.loc['f1', 's7'], 's8':df.loc['f1', 's8'], 'Average':df.loc['f1', 'Average'], 'Standard deviation':df.loc['f1', 'Standard deviation']}]}
+
 
 '''
 解析
@@ -83,25 +99,28 @@ my_dict = {
 ext(my_dict)
 '''
 def ext(my_dict):
-    print(my_dict)
-    if my_dict['task'] == '脑电帽迁移':
-        res = '1_'
-    elif my_dict['task'] == '模态迁移':
-        res = '2_'
-    elif my_dict['task'] == '范式迁移':
-        res = '3_'
-
-    res += my_dict['model'] + '_' \
-        + my_dict['epoch'] + '_' \
-        + my_dict['source'][0:11] + '_' \
-        + my_dict['target'][0:11] + '_' \
-        + my_dict['batchsize'] + '_' \
-        + my_dict['optimizer'] + '_'
-    
-    if my_dict['ea'] == 'true':
-        res += 'EA'
-    elif my_dict['ea'] == 'false':
-        res += 'woEA'
+    print('my_dict: ', my_dict)
+    # if my_dict['task'] == '脑电帽迁移':
+    #     res = '1_'
+    # elif my_dict['task'] == '模态迁移':
+    #     res = '2_'
+    # elif my_dict['task'] == '范式迁移':
+    #     res = '3_'
+    #
+    # res += my_dict['model'] + '_' \
+    #     + my_dict['epoch'] + '_' \
+    #     + my_dict['source'][0:11] + '_' \
+    #     + my_dict['target'][0:11] + '_' \
+    #     + my_dict['batchsize'] + '_' \
+    #     + my_dict['optimizer'] + '_'
+    #
+    # if my_dict['ea'] == 'true':
+    #     res += 'EA'
+    # elif my_dict['ea'] == 'false':
+    #     res += 'woEA'
+    res = my_dict['model']
+    print("=====")
+    print(res)
     
     return res
 
