@@ -4,6 +4,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'XXXXXXX'
+
 @app.route('/')
 def launch():
     return render_template('main.html', username=session.get('username'))
@@ -37,16 +38,38 @@ def run():
     print(request.form)
     datasets = [f'BNCI{code}.zip' for code in ('2014001','2014002','2014004','2015002')]
     if (request.form['source'] not in datasets) or (request.form['target'] not in datasets):
-        return '未识别的数据集，请确认'  # 数据集无效
+        return {'status':'未识别的数据集，请确认'}  # 数据集无效
     elif '' in request.form.values():
-        return '存在未选择的参数'
+        return {'status':'存在未选择的参数'}
     else:
         session['compose'] = request.form
-        return 'true'  # 返回有效
+        return {'status':'OK'}  # 返回有效
+    
+@app.route('/train', methods=['GET'])
+def train():
+    if 'username' not in session:
+        return login()
+    if 'compose' not in session:
+        return panel()
+    framework=''
+    if session['compose']['model'] == 'Ours':
+        framework = '图8 我们提出的SOTA方法.png'
+    else:
+        for file in os.listdir('static/framework/'):
+            if session['compose']['model'] in file:
+                framework = file
+                break
+    epoch = session['compose']['epoch']
+    return render_template('train.html', framework=framework
+                           , loss=list(pd.read_csv(f"data/loss_{epoch}.csv", header=None)[0])
+                           , teacher = list(pd.read_csv(f"data/accuracy_{epoch}.csv", header=None, sep='\t')[0]) 
+                                        if session['compose']['model']=='Ours' else []
+                           , student = list(pd.read_csv(f"data/accuracy_{epoch}.csv", header=None, sep='\t')[1]))
 
 @app.route('/comparision', methods=['GET'])
 def comparision():
     return render_template('comparision.html')
+
 @app.route('/framework', methods=['GET'])
 def framework():
     return render_template('framework.html')
@@ -57,29 +80,16 @@ def result():
         return login()
     if 'compose' not in session:
         return panel()
-    # print(type(session['compose']))
-    # sss = ext(session['compose'])
-    # print('SSS:',sss)
-    # return sss
     return render_template('result.html')
 
 @app.route('/getTable', methods=['GET', 'POST'])
 def table():
     file = ext(session['compose'])
-    df = pd.read_excel(os.path.join('data', file) + '.xlsx')
+    df = pd.read_excel(f"data/{file}.xlsx")
     df.set_index(df.columns[0], inplace=True)
-    return {'code':0, 'msg':'', 'count':0, 'data': [{'head':head.capitalize(), **{index:'%.3f'%df.loc[head, index] for index in [f's{i}' for i in range(9)]+['Average']}, 'Standard deviation': '0.000'} for head in ('accuracy', 'precision', 'recall', 'f1')]} if file in ('LDA', 'LR', 'AdaBoost', 'GDBT', 'XGB') \
+    return {'code':0, 'msg':'', 'count':0, 'data': [{'head':head.capitalize(), **{index:'%.3f'%df.loc[head, index] for index in [f's{i}' for i in range(9)]+['Average']}, 'Standard deviation': '0.000'} for head in ('accuracy', 'precision', 'recall', 'f1')]} \
+        if file in ('LDA', 'LR', 'AdaBoost', 'GDBT', 'XGB') \
         else {'code':0, 'msg':'', 'count':0, 'data': [{'head':head.capitalize(), **{index:'%.3f'%df.loc[head, index] for index in [f's{i}' for i in range(9)]+['Average','Standard deviation']}} for head in ('accuracy', 'precision', 'recall', 'f1')]}
-                # [{'head':head, 's0':df.loc['accuracy', 's0'], 's1':df.loc['accuracy', 's1'], 's2':df.loc['accuracy', 's2'], 's3':df.loc['accuracy', 's3'], 's4':df.loc['accuracy', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['accuracy', 's6'], 's7':df.loc['accuracy', 's7'], 's8':df.loc['accuracy', 's8'], 'Average':df.loc['accuracy', 'Average']} for head in ('Accuracy', 'Precision', 'Recall', 'F1')]}
-            # [{'head':'accuracy', 's0':df.loc['accuracy', 's0'], 's1':df.loc['accuracy', 's1'], 's2':df.loc['accuracy', 's2'], 's3':df.loc['accuracy', 's3'], 's4':df.loc['accuracy', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['accuracy', 's6'], 's7':df.loc['accuracy', 's7'], 's8':df.loc['accuracy', 's8'], 'Average':df.loc['accuracy', 'Average']},
-            #  {'head':'precision', 's0':df.loc['precision', 's0'], 's1':df.loc['precision', 's1'], 's2':df.loc['precision', 's2'], 's3':df.loc['precision', 's3'], 's4':df.loc['precision', 's4'], 's5':df.loc['precision', 's5'], 's6':df.loc['precision', 's6'], 's7':df.loc['precision', 's7'], 's8':df.loc['precision', 's8'], 'Average':df.loc['precision', 'Average']},
-            #  {'head':'recall', 's0':df.loc['recall', 's0'], 's1':df.loc['recall', 's1'], 's2':df.loc['recall', 's2'], 's3':df.loc['recall', 's3'], 's4':df.loc['recall', 's4'], 's5':df.loc['recall', 's5'], 's6':df.loc['recall', 's6'], 's7':df.loc['recall', 's7'], 's8':df.loc['recall', 's8'], 'Average':df.loc['recall', 'Average']},
-            #  {'head':'f1', 's0':df.loc['f1', 's0'], 's1':df.loc['f1', 's1'], 's2':df.loc['f1', 's2'], 's3':df.loc['f1', 's3'], 's4':df.loc['f1', 's4'], 's5':df.loc['accuracy', 's5'], 's6':df.loc['f1', 's6'], 's7':df.loc['f1', 's7'], 's8':df.loc['f1', 's8'], 'Average':df.loc['f1', 'Average']}]}
-
-            #  {'head':'precision', 's0':round(df.loc['precision', 's0'], 3), 's1':round(df.loc['precision', 's1'], 3), 's2':round(df.loc['precision', 's2'], 3), 's3':round(df.loc['precision', 's3'], 3), 's4':round(df.loc['precision', 's4'], 3), 's5':round(df.loc['precision', 's5'], 3), 's6':round(df.loc['precision', 's6'], 3), 's7':round(df.loc['precision', 's7'], 3), 's8':round(df.loc['precision', 's8'], 3), 'Average':round(df.loc['precision', 'Average'], 3), 'Standard deviation':round(df.loc['precision', 'Standard deviation'], 3)},
-            #  {'head':'recall', 's0':round(df.loc['recall', 's0'], 3), 's1':round(df.loc['recall', 's1'], 3), 's2':round(df.loc['recall', 's2'], 3), 's3':round(df.loc['recall', 's3'], 3), 's4':round(df.loc['recall', 's4'], 3), 's5':round(df.loc['recall', 's5'], 3), 's6':round(df.loc['recall', 's6'], 3), 's7':round(df.loc['recall', 's7'], 3), 's8':round(df.loc['recall', 's8'], 3), 'Average':round(df.loc['recall', 'Average'], 3), 'Standard deviation':round(df.loc['recall', 'Standard deviation'], 3)},
-            #  {'head':'f1', 's0':round(df.loc['f1', 's0'], 3), 's1':round(df.loc['f1', 's1'], 3), 's2':round(df.loc['f1', 's2'], 3), 's3':round(df.loc['f1', 's3'], 3), 's4':round(df.loc['f1', 's4'], 3), 's5':round(df.loc['f1', 's5'], 3), 's6':round(df.loc['f1', 's6'], 3), 's7':round(df.loc['f1', 's7'], 3), 's8':round(df.loc['f1', 's8'], 3), 'Average':round(df.loc['f1', 'Average'], 3), 'Standard deviation':round(df.loc['f1', 'Standard deviation'], 3)}]}
-
 
 '''
 解析
@@ -96,30 +106,18 @@ my_dict = {
 ext(my_dict)
 '''
 def ext(my_dict):
-    print('my_dict: ', my_dict)
+    # print('my_dict: ', my_dict)
     return my_dict['model']
-    # if my_dict['task'] == '脑电帽迁移':
-    #     res = '1_'
-    # elif my_dict['task'] == '模态迁移':
-    #     res = '2_'
-    # elif my_dict['task'] == '范式迁移':
-    #     res = '3_'
-    #
-    # res += my_dict['model'] + '_' \
-    #     + my_dict['epoch'] + '_' \
-    #     + my_dict['source'][0:11] + '_' \
-    #     + my_dict['target'][0:11] + '_' \
-    #     + my_dict['batchsize'] + '_' \
-    #     + my_dict['optimizer'] + '_'
-    #
-    # if my_dict['ea'] == 'true':
-    #     res += 'EA'
-    # elif my_dict['ea'] == 'false':
-    #     res += 'woEA'
 
-    # res = my_dict['model']
-    # print("=====")
-    # print(res)
+# def signal_handler(sig, frame):
+#     session.pop('username', None)
+#     session.pop('compose', None)
+#     print('Flask 服务器已经停止')
+#     shutdown_func = request.environ.get('werkzeug.server.shutdown')
+#     if shutdown_func is None:
+#         raise RuntimeError('Not running with the Werkzeug Server')
+#     shutdown_func()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080, threaded=True)  # host='0.0.0.0'
+    # signal.signal(signal.SIGINT, signal_handler)
+    app.run(debug=True, port=8080, threaded=True)# host='0.0.0.0'

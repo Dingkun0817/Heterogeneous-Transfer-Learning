@@ -8,38 +8,56 @@
 </head>
 
 <body>
-    <!--    两层div居中  -->
-    <div style="text-align: center; margin-bottom:45px;">
-        <div class="layui-inline">
-            <table id="result_table" lay-filter="result_table"></table>
+    <div class="layui-form-item" style="width:100%; margin-top:10px;">
+        <div class="layui-input-group" style="margin:0 auto;">
+            <div class="layui-input-split layui-input-prefix">
+                请上传数据集
+            </div>
+            <input style="border:1.5px solid green; width:200px;" id="file" type="text" class="layui-input"
+                readonly="readonly" autocomplete="off" name="title" required lay-verify="required">
+            <div class="layui-input-suffix">
+                <button class="layui-btn layui-btn-primary" id="select"
+                    lay-data="{url:'/b/', accept:'file', exts:'zip', auto:false, drag:true, acceptMime:'application/zip'}">选择文件</button>
+                <button class="layui-btn layui-btn-primary" lay-active="upload">上传</button>
+            </div>
         </div>
     </div>
 
-    <!--    展示exp结果图  -->
-    <div style="text-align:center;">
-        <img src="{{url_for('static', filename='down.png')}}" width="70%">
-    </div>
+    <div style="display:none;" id="result">
+        <!--    两层div居中  -->
+        <div style="text-align: center; margin-bottom:45px;">
+            <div class="layui-inline">
+                <table id="resultTable" lay-filter="resultTable"></table>
+            </div>
+        </div>
 
+        <!--    展示exp结果图  -->
+        <div style="text-align:center;">
+            <img src="{{url_for('static', filename='result/down.png')}}" width="70%">
+        </div>
+    </div>
 
     <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script>
         var $ = layui.$;
-        layui.use(function () {
-            $('#resultLi', window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
-        })
 
-        layui.use('table', function () {
-            var table = layui.table;
-            //第一个实例
-            table.render({
-                elem: '#result_table'
-                , url: '/getTable' //数据接口
-                , page: false //开启分页
-                , cols: [[ //表头
+        var file;
+        if (file != undefined) {
+            $("[id='file']").val(file);
+            $("[id='result']").css('display', 'block');
+        }
+
+        layui.use(function () {
+            $("[id='resultLi']", window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
+
+            layui.table.render({
+                elem: "[id='resultTable']",
+                url: '/getTable', //数据接口
+                page: false, //开启分页
+                cols: [[ //表头
                     {
                         field: 'head', title: '', width: 100, templet: function (data) {
-                            // console.log(data);
-                            return "<span style='font-weight: 600;'>" + data.head + "</span>"
+                            return "<span style='font-weight: 600;'>" + data.head + "</span>";
                         }
                     },
                     { field: 's0', title: 'S0', width: 80 },
@@ -53,8 +71,47 @@
                     { field: 's8', title: 'S8', width: 80 },
                     { field: 'Average', title: 'Average', width: 100 },
                     { field: 'Standard deviation', title: 'Standard Deviation', width: 175 },
-                ]]
-                , width: 1105
+                ]],
+                width: 1105,
+            });
+
+            layui.upload.render({
+                elem: "[id='select']",
+                auto: false,
+                bindAction: "[id='upload']",
+                // multiple: true,
+                choose: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        $("[id='file']").val(file.name);
+                    });
+                }
+            });
+
+            layui.util.event('lay-active', {
+                'upload': function () {
+                    const filename = $("[id='file']").val();
+                    if (filename == '') {
+                        layer.open({
+                            title: '提示',
+                            content: '请选择数据集',
+                        });
+                        return;
+                    }
+                    if (!['2014001', '2014002', '2014004', '2015002'].includes(filename.slice(4, -4))) {
+                        layer.open({
+                            title: '提示',
+                            content: '未识别的数据集，请确认',
+                        });
+                        return;
+                    }
+                    $("[id='result']").css('display', 'none');
+                    file = filename;
+                    const loading = layer.load(0);
+                    setTimeout(function () {
+                        layer.close(loading);
+                        $("[id='result']").css('display', 'block');
+                    }, 5000);
+                }
             });
         });
     </script>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{url_for('static', filename='layui/css/layui.css')}}" rel="stylesheet">
+</head>
+
+<body>
+    {% if framework!='' %}
+    <div style="text-align:center;">
+        <img src="static/framework/{{framework}}" style="width:40%;">
+        <div style="font-size:22px;"><strong>{{ framework[3:-4] }}</strong></div>
+        <div style="height:50px;"></div>
+    </div>
+    {% else %}
+    <div style="height:150px;"></div>
+    {% endif %}
+    <canvas id="xy" width="2000" height="600"></canvas>
+
+    <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
+    <script>
+        var $ = layui.$;
+        layui.use(function () {
+            $("[id='trainLi']", window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
+        })
+
+        const lossData = {{ loss }};
+        const teacherData = {{ teacher }};
+        const studentData = {{ student }};
+
+        const accuracyBaseY = 47;
+        const lossX = (epoch) => epoch * 560 / lossData.length + 20;
+        const lossY = (loss) => 300 - loss * 52;
+        const accuracyX = (epoch) => epoch * 560 / lossData.length + 680;
+        const accuracyY = (accuracy) => 300 - (accuracy - accuracyBaseY) * 4.95;
+
+        const xy = $("[id='xy']")[0].getContext("2d");
+        xy.beginPath();
+        xy.font = "16px Times New Roman";
+        xy.textBaseline = "middle";
+        // loss-epoch
+        // 绘制x轴
+        xy.moveTo(lossX(0), lossY(0));
+        xy.lineTo(lossX(lossData.length) + 20, lossY(0));
+        xy.lineTo(lossX(lossData.length) + 14, lossY(0) - 3);
+        xy.moveTo(lossX(lossData.length) + 20, lossY(0));
+        xy.lineTo(lossX(lossData.length) + 14, lossY(0) + 3);
+        // 绘制y轴
+        xy.moveTo(lossX(0), lossY(0));
+        xy.lineTo(lossX(0), lossY(5) - 20);
+        xy.lineTo(lossX(0) - 3, lossY(5) - 14);
+        xy.moveTo(lossX(0), lossY(5) - 20);
+        xy.lineTo(lossX(0) + 3, lossY(5) - 14);
+        // 标注xy轴
+        xy.textAlign = "left";
+        xy.fillText("Epoch", lossX(lossData.length) + 25, lossY(0));
+        xy.textAlign = "center";
+        xy.fillText("Loss", lossX(0), lossY(5) - 28);
+        // 标注刻度
+        for (i = lossData.length / 10; i <= lossData.length; i += lossData.length / 10) {
+            xy.moveTo(lossX(i), lossY(0));
+            xy.lineTo(lossX(i), lossY(0) - 5);
+            xy.textAlign = "center";
+            xy.fillText(i.toString(), lossX(i), lossY(0) + 20);
+        }
+        for (i = 1; i <= 5; i += 1) {
+            xy.moveTo(lossX(0), lossY(i));
+            xy.lineTo(lossX(0) + 5, lossY(i));
+            xy.textAlign = "right";
+            xy.fillText(i.toString(), lossX(0) - 5, lossY(i));
+        }
+        // accuracy-epoch
+        // 绘制x轴
+        xy.moveTo(accuracyX(0), accuracyY(accuracyBaseY));
+        xy.lineTo(accuracyX(studentData.length) + 20, accuracyY(accuracyBaseY));
+        xy.lineTo(accuracyX(studentData.length) + 14, accuracyY(accuracyBaseY) - 3);
+        xy.moveTo(accuracyX(studentData.length) + 20, accuracyY(accuracyBaseY));
+        xy.lineTo(accuracyX(studentData.length) + 14, accuracyY(accuracyBaseY) + 3);
+        // 绘制y轴
+        xy.moveTo(accuracyX(0), accuracyY(accuracyBaseY));
+        xy.lineTo(accuracyX(0), accuracyY(100) - 20);
+        xy.lineTo(accuracyX(0) - 3, accuracyY(100) - 14);
+        xy.moveTo(accuracyX(0), accuracyY(100) - 20);
+        xy.lineTo(accuracyX(0) + 3, accuracyY(100) - 14);
+        // 标注xy轴
+        xy.textAlign = "left";
+        xy.fillText("Epoch", accuracyX(studentData.length) + 25, accuracyY(accuracyBaseY));
+        xy.textAlign = "center";
+        xy.fillText("Accuracy/%", accuracyX(0), accuracyY(100) - 29);
+        // 标注刻度
+        for (i = studentData.length / 10; i <= studentData.length; i += studentData.length / 10) {
+            xy.moveTo(accuracyX(i), accuracyY(accuracyBaseY));
+            xy.lineTo(accuracyX(i), accuracyY(accuracyBaseY) - 5);
+            xy.textAlign = "center";
+            xy.fillText(i.toString(), accuracyX(i), accuracyY(accuracyBaseY) + 20);
+        }
+        for (i = 50; i <= 100; i += 10) {
+            xy.moveTo(accuracyX(0), accuracyY(i));
+            xy.lineTo(accuracyX(0) + 5, accuracyY(i));
+            xy.textAlign = "right";
+            xy.fillText(i.toString(), accuracyX(0) - 5, accuracyY(i));
+        }
+        xy.stroke();
+        // 标注图例
+        if (teacherData.length) {
+            const legendY = 100;
+            xy.textAlign = "left";
+
+            xy.strokeStyle = "red";
+            xy.beginPath();
+            xy.moveTo(accuracyX(studentData.length * .55), accuracyY(legendY));
+            xy.lineTo(accuracyX(studentData.length * .6), accuracyY(legendY));
+            xy.stroke();
+            xy.fillStyle = "red";
+            xy.fillText("Teacher", accuracyX(studentData.length * .6), accuracyY(legendY));
+
+            xy.strokeStyle = "green";
+            xy.beginPath();
+            xy.moveTo(accuracyX(studentData.length * .75), accuracyY(legendY));
+            xy.lineTo(accuracyX(studentData.length * .8), accuracyY(legendY));
+            xy.stroke();
+            xy.fillStyle = "green";
+            xy.fillText("Student", accuracyX(studentData.length * .8), accuracyY(legendY));
+        }
+        // 标注图题
+        xy.font = "22px bold 宋体";
+        xy.fillStyle = "black";
+        xy.textAlign = "center";
+        xy.fillText('模型的Loss随Epoch变化过程展示', lossX(28), lossY(0)+45);
+        xy.fillText('模型的Accuracy随Epoch变化过程展示', accuracyX(28), accuracyY(accuracyBaseY)+45);
+
+        const sleep = (delay) => new Promise((resolve, reject) => setTimeout(resolve, delay));
+        (async () => {
+            await sleep(100);
+            for (i = 1; i < lossData.length; ++i) {
+                await sleep(100);
+                xy.strokeStyle = "black";
+                xy.beginPath();
+                xy.moveTo(lossX(i), lossY(lossData[i - 1]));
+                xy.lineTo(lossX(i + 1), lossY(lossData[i]));
+                xy.stroke();
+
+                xy.strokeStyle = "green";
+                xy.beginPath();
+                xy.moveTo(accuracyX(i), accuracyY(studentData[i - 1]));
+                xy.lineTo(accuracyX(i + 1), accuracyY(studentData[i]));
+                xy.stroke();
+
+                if (teacherData.length) {
+                    xy.strokeStyle = "red";
+                    xy.beginPath();
+                    xy.moveTo(accuracyX(i), accuracyY(teacherData[i - 1]));
+                    xy.lineTo(accuracyX(i + 1), accuracyY(teacherData[i]));
+                    xy.stroke();
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>
