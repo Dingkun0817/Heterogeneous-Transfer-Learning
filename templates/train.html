@@ -10,8 +10,11 @@
 <body>
     {% if framework!='' %}
     <div style="text-align:center;">
-        <img src="static/framework/{{framework}}" style="width:40%;">
-        <div style="font-size:22px;"><strong>{{ framework[3:-4] }}</strong></div>
+        <img src="static/framework/{{framework}}" style="width:60%;">
+
+        <div style="font-size:22px;"><strong>图1：{{ framework[3:-4] }}</strong></div>
+
+
         <div style="height:50px;"></div>
     </div>
     {% else %}
@@ -125,11 +128,12 @@
             xy.fillText("Student", accuracyX(studentData.length * .8), accuracyY(legendY));
         }
         // 标注图题
-        xy.font = "22px bold 宋体";
+        xy.font = '22px Arial';
         xy.fillStyle = "black";
         xy.textAlign = "center";
-        xy.fillText('模型的Loss随Epoch变化过程展示', lossX(28), lossY(0)+45);
-        xy.fillText('模型的Accuracy随Epoch变化过程展示', accuracyX(28), accuracyY(accuracyBaseY)+45);
+        xy.fillText('图2 模型的Loss随Epoch变化过程展示', lossX(55), lossY(0)+45);
+        xy.fillText('图3 模型的Accuracy随Epoch变化过程展示', accuracyX(55), accuracyY(accuracyBaseY)+45);
+
 
         const sleep = (delay) => new Promise((resolve, reject) => setTimeout(resolve, delay));
         (async () => {
