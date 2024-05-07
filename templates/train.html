@@ -17,7 +17,11 @@
     {% else %}
     <div style="height:150px;"></div>
     {% endif %}
-    <canvas id="xy" width="2000" height="600"></canvas>
+    <canvas id="xy" width="2000" height="330"></canvas>
+    <div>
+        <span style="margin-left:130px; font-size:22px;"><strong>图{{ (framework != '') + 1 }} 模型的Loss随Epoch变化过程展示</strong></span>
+        <span style="margin-left:265px; font-size:22px;"><strong>图{{ (framework != '') + 2 }} 模型的Accuracy随Epoch变化过程展示</strong></span>
+    </div>
 
     <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
     <script>
@@ -125,11 +129,11 @@
             xy.fillText("Student", accuracyX(studentData.length * .8), accuracyY(legendY));
         }
         // 标注图题
-        xy.font = '22px Arial';
-        xy.fillStyle = "black";
-        xy.textAlign = "center";
-        xy.fillText("图{{ (framework != '') + 1 }} 模型的Loss随Epoch变化过程展示", lossX(lossData.length * 0.5) + 10, lossY(0) + 45);
-        xy.fillText("图{{ (framework != '') + 2 }} 模型的Accuracy随Epoch变化过程展示", accuracyX(studentData.length * 0.5) + 10, accuracyY(accuracyBaseY) + 45);
+        // xy.font = "22px Arial";
+        // xy.fillStyle = "black";
+        // xy.textAlign = "center";
+        // xy.fillText("图{{ (framework != '') + 1 }} 模型的Loss随Epoch变化过程展示", lossX(lossData.length * 0.5) + 10, lossY(0) + 45);
+        // xy.fillText("图{{ (framework != '') + 2 }} 模型的Accuracy随Epoch变化过程展示", accuracyX(studentData.length * 0.5) + 10, accuracyY(accuracyBaseY) + 45);
 
 
         const sleep = (delay) => new Promise((resolve, reject) => setTimeout(resolve, delay));
