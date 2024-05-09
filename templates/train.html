@@ -9,7 +9,7 @@
 
 <body>
     {% if framework!='' %}
-    <div style="text-align:center;">
+    <div style="text-align:center; margin-top:30px;">
         <img src="static/framework/{{ framework }}" style="width:60%;">
         <div style="font-size:22px;"><strong>图1 {{ framework[3:-4] }}</strong></div>
         <div style="height:50px;"></div>
@@ -17,8 +17,8 @@
     {% else %}
     <div style="height:150px;"></div>
     {% endif %}
-    <canvas id="xy" width="2000" height="330"></canvas>
-    <div>
+    <canvas id="xy" width="1500" height="330"></canvas>
+    <div style="margin-bottom:45px;">
         <span style="margin-left:130px; font-size:22px;"><strong>图{{ (framework != '') + 1 }} 模型的Loss随Epoch变化过程展示</strong></span>
         <span style="margin-left:265px; font-size:22px;"><strong>图{{ (framework != '') + 2 }} 模型的Accuracy随Epoch变化过程展示</strong></span>
     </div>

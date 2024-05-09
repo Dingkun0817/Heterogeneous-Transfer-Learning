@@ -80,7 +80,7 @@ def result():
         return login()
     if 'compose' not in session:
         return panel()
-    return render_template('result.html')
+    return render_template('result.html', ea=session['compose']['ea'])
 
 @app.route('/getTable', methods=['GET', 'POST'])
 def table():

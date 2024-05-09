@@ -23,18 +23,27 @@
         </div>
     </div>
 
-    <div style="display:none;" id="result">
+    <div style="display:none; text-align:center;" id="result">
+        {% if ea=='false' %}
+        <div style="height:30px;"></div>
+        {% endif %}
         <!--    两层div居中  -->
-        <div style="text-align: center; margin-bottom:45px;">
+        <div style="text-align: center;">
             <div class="layui-inline">
                 <table id="resultTable" lay-filter="resultTable"></table>
             </div>
+            <div>
+                <button type="button" style="width:10%; margin-top:10px;" class="layui-btn layui-btn-fluid"
+                lay-active="download">下&nbsp;&nbsp;&nbsp;&nbsp;载</button>
+            </div>
         </div>
 
+        {% if ea=='true' %}
         <!--    展示exp结果图  -->
-        <div style="text-align:center;">
+        <div style="text-align:center; margin-top:45px;">
             <img src="{{url_for('static', filename='result/down.png')}}" width="84%">
         </div>
+        {% endif %}
     </div>
 
     <script src="{{url_for('static', filename='layui/layui.js')}}"></script>
@@ -48,16 +57,19 @@
         }
 
         layui.use(function () {
+            var table = layui.table;
+
             $("[id='resultLi']", window.parent.document).addClass('layui-this').siblings().removeClass('layui-this');
 
-            layui.table.render({
+            table.render({
                 elem: "[id='resultTable']",
+                id: 'resultTable',
                 url: '/getTable', //数据接口
                 page: false, //开启分页
                 cols: [[ //表头
                     {
                         field: 'head', title: '', width: 100, templet: function (data) {
-                            return "<span style='font-weight: 600;'>" + data.head + "</span>";
+                            return "<span style='font-weight:600;'>" + data.head + "</span>";
                         }
                     },
                     { field: 's0', title: 'S0', width: 80 },
@@ -111,7 +123,13 @@
                         layer.close(loading);
                         $("[id='result']").css('display', 'block');
                     }, 5000);
-                }
+                },
+                'download': function () {
+                    table.exportFile('resultTable', undefined, {
+                        type: 'xls', // 导出的文件格式，支持: csv,xls
+                        title: '导出的文件标题'
+                    });
+                },
             });
         });
     </script>
